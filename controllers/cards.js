@@ -1,31 +1,80 @@
-const cards = require('../models/card');
+const Card = require('../models/card');
+const mongoose = require('mongoose');
 
-const getCards = async (req, res)=>{
+const getCards = async (req, res) => {
   try {
-    const allCards = await cards.find({})
-    res.send(allCards);
+    const allCards = await Card.find({})
+    if (allCards) {
+      res.send(allCards);
+    } else {
+      res.status(404).send({message: 'запрашиваемые карточки не найдены'})
+    }
   } catch (err) {
-    res.status(500).send({message: 'error'})
+    res.status(500).send({message: 'На сервере произошла ошибка'})
   }
 }
 
-const deleteCardById = async (req, res)=>{
+const deleteCardById = async (req, res) => {
   try {
-    const cardWithId = await cards.findByIdAndDelete(req.params.id);
-    res.send(cardWithId);
+    const cardWithId = await Card.findByIdAndDelete(req.params.id);
+    if (cardWithId) {
+      res.send(cardWithId);
+    } else {
+      res.status(404).send({message: 'запрашиваемая карточка не найдена'})
+    }
   } catch (err) {
-    res.status(500).send({message: 'error'})
+    res.status(500).send({message: 'На сервере произошла ошибка'})
   }
 }
 
-const createCard = async (req, res)=> {
+const createCard = async (req, res) => {
   const {name, link} = req.body;
   try {
-    const card = await cards.create({name, link})
+    const card = new Card({name, link, likes: []})
+    card.owner = new mongoose.Types.ObjectId(req.user._id)
+    await card.save();
     res.send({data: card})
   } catch (err) {
-    res.status(500).send({message: 'error'})
+    if (err.name === 'ValidationError') {
+      res.status(400).send(err.message)
+    } else {
+      res.status(500).send({message: 'На сервере произошла ошибка'})
+    }
   }
 }
 
-module.exports = {getCards, deleteCardById, createCard};
+const likeCard = async (req, res) => {
+  try {
+    const like = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      {$addToSet: {likes: req.user._id}}, // добавить _id в массив, если его там нет
+      {new: true},
+    );
+    if (like) {
+      res.send(like);
+    } else {
+      res.status(404).send({message: 'запрашиваемая карточка не найдена'})
+    }
+  } catch (err) {
+    res.status(500).send({message: 'На сервере произошла ошибка'})
+  }
+}
+
+const dislikeCard = async (req, res) => {
+  try {
+    const dislike = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      {$pull: {likes: req.user._id}}, // убрать _id из массива
+      {new: true},
+    );
+    if (dislike) {
+      res.send(dislike);
+    } else {
+      res.status(404).send({message: 'запрашиваемая карточка не найдена'})
+    }
+  } catch (err) {
+    res.status(500).send({message: 'На сервере произошла ошибка'})
+  }
+}
+
+module.exports = {getCards, deleteCardById, createCard, likeCard, dislikeCard};
