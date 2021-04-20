@@ -16,14 +16,17 @@ const getCards = async (req, res) => {
 
 const deleteCardById = async (req, res) => {
   try {
-    const cardWithId = await Card.findByIdAndDelete(req.params.id);
-    if (cardWithId) {
-      res.send(cardWithId);
-    } else {
-      res.status(404).send({message: 'запрашиваемая карточка не найдена'})
+    const cardWithId = await Card.findByIdAndDelete(req.params.id)
+      .orFail(new Error('NotValidId'))
+    {
+      res.status(200).send(cardWithId);
     }
   } catch (err) {
-    res.status(500).send({message: 'На сервере произошла ошибка'})
+    if (err.message === 'NotValidId') {
+      res.status(404).send({message: 'запрашиваемая карточка не найдена'})
+    } else {
+      res.status(500).send({message: 'На сервере произошла ошибка'})
+    }
   }
 }
 
@@ -49,14 +52,17 @@ const likeCard = async (req, res) => {
       req.params.cardId,
       {$addToSet: {likes: req.user._id}}, // добавить _id в массив, если его там нет
       {new: true},
-    );
-    if (like) {
-      res.send(like);
-    } else {
-      res.status(404).send({message: 'запрашиваемая карточка не найдена'})
+    )
+      .orFail(new Error('NotValidId'))
+    {
+      res.status(200).send(like);
     }
   } catch (err) {
-    res.status(500).send({message: 'На сервере произошла ошибка'})
+    if (err.message === 'NotValidId') {
+      res.status(404).send({message: 'запрашиваемая карточка не найдена'})
+    } else {
+      res.status(500).send({message: 'На сервере произошла ошибка'})
+    }
   }
 }
 
@@ -66,14 +72,17 @@ const dislikeCard = async (req, res) => {
       req.params.cardId,
       {$pull: {likes: req.user._id}}, // убрать _id из массива
       {new: true},
-    );
-    if (dislike) {
-      res.send(dislike);
-    } else {
-      res.status(404).send({message: 'запрашиваемая карточка не найдена'})
+    )
+      .orFail(new Error('NotValidId'))
+    {
+      res.status(200).send(dislike);
     }
   } catch (err) {
-    res.status(500).send({message: 'На сервере произошла ошибка'})
+    if (err.message === 'NotValidId') {
+      res.status(404).send({message: 'запрашиваемая карточка не найдена'})
+    } else {
+      res.status(500).send({message: 'На сервере произошла ошибка'})
+    }
   }
 }
 
