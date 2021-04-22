@@ -22,8 +22,10 @@ const getUserById = async (req, res) => {
       .orFail(new Error('NotValidId'));
     res.status(200).send(userWithId);
   } catch (err) {
-    if (err.message === 'NotValidId') {
-      res.status(404).send({ message: 'запрашиваемый пользователь не найден' });
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'переданы некорректные данные' });
+    } else if (err.name === 'NotFound') {
+      res.status(404).send({ message: 'Объект не найден' });
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     }
@@ -46,27 +48,33 @@ const createUser = async (req, res) => {
 
 const updateProfile = async (req, res) => {
   try {
-    const newUser = await User.findByIdAndUpdate(req.user._id, opt);
-    if (newUser) {
-      res.send(newUser);
-    } else {
-      res.status(404).send({ message: 'запрашиваемый пользователь не найден' });
-    }
+    const newUser = await User.findByIdAndUpdate(req.user._id, opt)
+      .orFail(new Error('NotValidId'));
+    res.status(200).send(newUser);
   } catch (err) {
-    res.status(500).send({ message: 'На сервере произошла ошибка' });
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'переданы некорректные данные' });
+    } else if (err.name === 'NotFound') {
+      res.status(404).send({ message: 'Объект не найден' });
+    } else {
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    }
   }
 };
 
 const updateAvatar = async (req, res) => {
   try {
-    const newAvatar = await User.findByIdAndUpdate(req.user._id, opt);
-    if (newAvatar) {
-      res.send(newAvatar);
-    } else {
-      res.status(404).send({ message: 'запрашиваемый пользователь не найден' });
-    }
+    const newAvatar = await User.findByIdAndUpdate(req.user._id, opt)
+      .orFail(new Error('NotValidId'));
+    res.status(200).send(newAvatar);
   } catch (err) {
-    res.status(500).send({ message: 'На сервере произошла ошибка' });
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'переданы некорректные данные' });
+    } else if (err.name === 'NotFound') {
+      res.status(404).send({ message: 'Объект не найден' });
+    } else {
+      res.status(500).send({ message: 'На сервере произошла ошибка' });
+    }
   }
 };
 

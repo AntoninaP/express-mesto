@@ -20,8 +20,10 @@ const deleteCardById = async (req, res) => {
       .orFail(new Error('NotValidId'));
     res.status(200).send(cardWithId);
   } catch (err) {
-    if (err.message === 'NotValidId') {
-      res.status(404).send({ message: 'запрашиваемая карточка не найдена' });
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'переданы некорректные данные' });
+    } else if (err.name === 'NotFound') {
+      res.status(404).send({ message: 'Объект не найден' });
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     }
@@ -54,8 +56,10 @@ const likeCard = async (req, res) => {
       .orFail(new Error('NotValidId'));
     res.status(200).send(like);
   } catch (err) {
-    if (err.message === 'NotValidId') {
-      res.status(404).send({ message: 'запрашиваемая карточка не найдена' });
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'переданы некорректные данные' });
+    } else if (err.name === 'NotFound') {
+      res.status(404).send({ message: 'Объект не найден' });
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     }
@@ -72,8 +76,10 @@ const dislikeCard = async (req, res) => {
       .orFail(new Error('NotValidId'));
     res.status(200).send(dislike);
   } catch (err) {
-    if (err.message === 'NotValidId') {
-      res.status(404).send({ message: 'запрашиваемая карточка не найдена' });
+    if (err.name === 'CastError') {
+      res.status(400).send({ message: 'переданы некорректные данные' });
+    } else if (err.name === 'NotFound') {
+      res.status(404).send({ message: 'Объект не найден' });
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     }
