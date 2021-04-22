@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
-//схема для карточки
+// схема для карточки
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     minlength: [2, 'Минимальная длина 2 символа'],
-    maxlength: [30, 'Максимальная длина 30 символов']
+    maxlength: [30, 'Максимальная длина 30 символов'],
   },
 
   link: {
@@ -26,7 +26,7 @@ const cardSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-  }
+  },
 });
 
 module.exports = mongoose.model('card', cardSchema);
