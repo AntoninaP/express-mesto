@@ -5,10 +5,10 @@ const opt = { new: true, runValidators: true };
 const getUsers = async (req, res) => {
   try {
     const allUsers = await User.find({})
-      .orFail(new Error('NotValidId'));
+      .orFail(new Error('NotValid'));
     res.status(200).send(allUsers);
   } catch (err) {
-    if (err.message === 'NotValidId') {
+    if (err.message === 'NotValid') {
       res.status(404).send({ message: 'запрашиваемые пользователи не найдены' });
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -23,8 +23,8 @@ const getUserById = async (req, res) => {
     res.status(200).send(userWithId);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: 'переданы некорректные данные' });
-    } else if (err.name === 'NotFound') {
+      res.status(400).send({ message: 'Переданы некорректные данные' });
+    } else if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Объект не найден' });
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -39,7 +39,7 @@ const createUser = async (req, res) => {
     res.send({ data: user });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(400).send(err.message);
+      res.status(400).send({message: err.message});
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     }
@@ -53,8 +53,8 @@ const updateProfile = async (req, res) => {
     res.status(200).send(newUser);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: 'переданы некорректные данные' });
-    } else if (err.name === 'NotFound') {
+      res.status(400).send({ message: 'Переданы некорректные данные' });
+    } else if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Объект не найден' });
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
@@ -69,8 +69,8 @@ const updateAvatar = async (req, res) => {
     res.status(200).send(newAvatar);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: 'переданы некорректные данные' });
-    } else if (err.name === 'NotFound') {
+      res.status(400).send({ message: 'Переданы некорректные данные' });
+    } else if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Объект не найден' });
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
