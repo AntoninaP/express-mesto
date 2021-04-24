@@ -17,7 +17,7 @@ const getCards = async (req, res) => {
 
 const deleteCardById = async (req, res) => {
   try {
-    const cardWithId = await Card.findByIdAndDelete(req.params.id)
+    const cardWithId = await Card.findByIdAndDelete(req.params.cardId)
       .orFail(new Error('NotValidId'));
     res.status(200).send(cardWithId);
   } catch (err) {

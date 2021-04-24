@@ -47,12 +47,13 @@ const createUser = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
+  const { name, about} = req.body;
   try {
-    const newUser = await User.findByIdAndUpdate(req.user._id, opt)
+    const newUser = await User.findByIdAndUpdate(req.user._id, {name, about},opt)
       .orFail(new Error('NotValidId'));
     res.status(200).send(newUser);
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === 'ValidationError') {
       res.status(400).send({ message: 'Переданы некорректные данные' });
     } else if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Объект не найден' });
@@ -63,12 +64,13 @@ const updateProfile = async (req, res) => {
 };
 
 const updateAvatar = async (req, res) => {
+  const {avatar } = req.body;
   try {
-    const newAvatar = await User.findByIdAndUpdate(req.user._id, opt)
+    const newAvatar = await User.findByIdAndUpdate(req.user._id, {avatar}, opt)
       .orFail(new Error('NotValidId'));
     res.status(200).send(newAvatar);
   } catch (err) {
-    if (err.name === 'CastError') {
+    if (err.name === 'ValidationError') {
       res.status(400).send({ message: 'Переданы некорректные данные' });
     } else if (err.message === 'NotValidId') {
       res.status(404).send({ message: 'Объект не найден' });
