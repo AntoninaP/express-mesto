@@ -39,7 +39,7 @@ const createUser = async (req, res) => {
     res.send({ data: user });
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(400).send({message: err.message});
+      res.status(400).send({ message: err.message });
     } else {
       res.status(500).send({ message: 'На сервере произошла ошибка' });
     }
@@ -47,9 +47,9 @@ const createUser = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-  const { name, about} = req.body;
+  const { name, about } = req.body;
   try {
-    const newUser = await User.findByIdAndUpdate(req.user._id, {name, about},opt)
+    const newUser = await User.findByIdAndUpdate(req.user._id, { name, about }, opt)
       .orFail(new Error('NotValidId'));
     res.status(200).send(newUser);
   } catch (err) {
@@ -64,9 +64,9 @@ const updateProfile = async (req, res) => {
 };
 
 const updateAvatar = async (req, res) => {
-  const {avatar } = req.body;
+  const { avatar } = req.body;
   try {
-    const newAvatar = await User.findByIdAndUpdate(req.user._id, {avatar}, opt)
+    const newAvatar = await User.findByIdAndUpdate(req.user._id, { avatar }, opt)
       .orFail(new Error('NotValidId'));
     res.status(200).send(newAvatar);
   } catch (err) {
