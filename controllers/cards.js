@@ -17,6 +17,12 @@ const getCards = async (req, res) => {
 
 const deleteCardById = async (req, res) => {
   try {
+  const card = await Card.findById(req.params.cardId)
+    if (card.owner.toString() !== req.user._id) {
+      res.status(400).send({ message: 'Пользователь не имеет прав на удаление данной карточки' });
+      return
+    }
+
     const cardWithId = await Card.findByIdAndDelete(req.params.cardId)
       .orFail(new Error('NotValidId'));
     res.status(200).send(cardWithId);
