@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { isEmail } = require('validator');
 
 // схема для пользователя
 const userSchema = new mongoose.Schema({
@@ -21,18 +22,18 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    validate: [isEmail, 'invalid email'],
   },
   password: {
     type: String,
     required: true,
-    minlength: 8,
-    select: false
-  }
+    select: false,
+  },
 });
 
 userSchema.path('avatar').validate((val) => {
-  urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
+  const urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
   return urlRegex.test(val);
 }, 'Invalid URL.');
 

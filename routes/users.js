@@ -1,5 +1,6 @@
 const express = require('express');
-const {celebrate, Joi} = require('celebrate');
+const { celebrate, Joi } = require('celebrate');
+
 const userRoutes = express.Router();
 const {
   getUsers, getUserById, getCurrentUser, updateProfile, updateAvatar,
@@ -8,19 +9,28 @@ const {
 // вернуть всех пользователей
 userRoutes.get('/', getUsers);
 
-//вернуть информацию о текущем пользователе
-userRoutes.get('/me', getCurrentUser)
+// вернуть информацию о текущем пользователе
+userRoutes.get('/me', getCurrentUser);
 
 // обновить профиль
-userRoutes.patch('/me', updateProfile);
+userRoutes.patch('/me', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30).required(),
+    about: Joi.string().min(2).max(30).required(),
+  }),
+}), updateProfile);
 
 // обновить аватар
-userRoutes.patch('/me/avatar', updateAvatar);
+userRoutes.patch('/me/avatar', celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().required(),
+  }),
+}), updateAvatar);
 
 // вернуть пользователя по id
 userRoutes.get('/:id', celebrate({
   params: Joi.object().keys({
-    id: Joi.string().alphanum().length(24),
+    id: Joi.string().hex().length(24),
   }).unknown(true),
 }), getUserById);
 

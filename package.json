@@ -6,13 +6,13 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "lint": "npx eslint"
+    "lint": "npx eslint ."
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AntoninaP/express-mesto.git"
   },
-  "author": "",
+  "author": "Polyakova Antonina",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/AntoninaP/express-mesto/issues"
@@ -21,13 +21,13 @@
   "devDependencies": {
     "eslint": "^7.24.0",
     "eslint-plugin-react": "^7.23.2",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
     "nodemon": "^2.0.7"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "celebrate": "^14.0.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
     "express": "^4.17.1",
     "helmet": "^4.5.0",
     "jsonwebtoken": "^8.5.1",
