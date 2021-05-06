@@ -32,11 +32,10 @@ const deleteCardById = async (req, res, next) => {
 const createCard = async (req, res, next) => {
   const { name, link } = req.body;
 
-  if (!validator.isURL(link, { require_protocol: true })) {
-    throw new BadRequestError('Переданы некорректные данные');
-  }
-
   try {
+    if (!validator.isURL(link, { require_protocol: true })) {
+      throw new BadRequestError('Переданы некорректные данные');
+    }
     const card = new Card({ name, link, likes: [] });
     card.owner = new mongoose.Types.ObjectId(req.user._id);
     await card.save();

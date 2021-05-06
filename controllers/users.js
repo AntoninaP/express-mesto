@@ -43,11 +43,10 @@ const createUser = async (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
 
-  if (!validator.isURL(avatar, { require_protocol: true })) {
-    throw new BadRequestError('Переданы некорректные данные');
-  }
-
   try {
+    if (!validator.isURL(avatar, { require_protocol: true })) {
+      throw new BadRequestError('Переданы некорректные данные');
+    }
     // хешируем пароль
     const hash = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -92,11 +91,11 @@ const updateProfile = async (req, res, next) => {
 const updateAvatar = async (req, res, next) => {
   const { avatar } = req.body;
 
-  if (!validator.isURL(avatar, { require_protocol: true })) {
-    throw new BadRequestError('Переданы некорректные данные');
-  }
-
   try {
+    if (!validator.isURL(avatar, { require_protocol: true })) {
+      throw new BadRequestError('Переданы некорректные данные');
+    }
+
     const newAvatar = await User.findByIdAndUpdate(req.user._id, { avatar }, opt)
       .orFail(new NotFoundError('Объект не найден'));
     res.status(200).send(newAvatar);
