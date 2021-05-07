@@ -1,5 +1,4 @@
 const bcrypt = require('bcryptjs');
-const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-error');
@@ -44,9 +43,6 @@ const createUser = async (req, res, next) => {
   } = req.body;
 
   try {
-    if (!validator.isURL(avatar, { require_protocol: true })) {
-      throw new BadRequestError('Переданы некорректные данные');
-    }
     // хешируем пароль
     const hash = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -92,10 +88,6 @@ const updateAvatar = async (req, res, next) => {
   const { avatar } = req.body;
 
   try {
-    if (!validator.isURL(avatar, { require_protocol: true })) {
-      throw new BadRequestError('Переданы некорректные данные');
-    }
-
     const newAvatar = await User.findByIdAndUpdate(req.user._id, { avatar }, opt)
       .orFail(new NotFoundError('Объект не найден'));
     res.status(200).send(newAvatar);

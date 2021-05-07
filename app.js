@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const helmet = require('helmet');
 const { celebrate, Joi } = require('celebrate');
 const { errors } = require('celebrate');
+const { isURL } = require('validator');
 const { routes } = require('./routes/index');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/not-found-error');
@@ -28,11 +29,19 @@ app.post('/signin', celebrate({
   }),
 }), login);
 
+const checkURL = (val, helper) => {
+  if (!isURL(val, { require_protocol: true })) {
+    return helper.message('Не валидный URL');
+  }
+
+  return val;
+};
+
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).default('Жак-Ив Кусто'),
     about: Joi.string().min(2).max(30).default('Исследователь'),
-    avatar: Joi.string().default('https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'),
+    avatar: Joi.string().custom(checkURL, 'invalid URL').default('https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png'),
     email: Joi.string().email().required(),
     password: Joi.string().required(),
   }),

@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const validator = require('validator');
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
@@ -33,9 +32,6 @@ const createCard = async (req, res, next) => {
   const { name, link } = req.body;
 
   try {
-    if (!validator.isURL(link, { require_protocol: true })) {
-      throw new BadRequestError('Переданы некорректные данные');
-    }
     const card = new Card({ name, link, likes: [] });
     card.owner = new mongoose.Types.ObjectId(req.user._id);
     await card.save();

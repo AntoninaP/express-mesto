@@ -1,5 +1,6 @@
 const express = require('express');
 const { celebrate, Joi } = require('celebrate');
+const { isURL } = require('validator');
 
 const userRoutes = express.Router();
 const {
@@ -21,9 +22,17 @@ userRoutes.patch('/me', celebrate({
 }), updateProfile);
 
 // обновить аватар
+const checkURL = (val, helper) => {
+  if (!isURL(val, { require_protocol: true })) {
+    return helper.message('Не валидный URL');
+  }
+
+  return val;
+};
+
 userRoutes.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    avatar: Joi.string().required(),
+    avatar: Joi.string().custom(checkURL, 'invalid URL'),
   }),
 }), updateAvatar);
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const { celebrate, Joi } = require('celebrate');
+const { isURL } = require('validator');
 
 const cardRoutes = express.Router();
 const {
@@ -17,10 +18,17 @@ cardRoutes.delete('/:cardId', celebrate({
 }), deleteCardById);
 
 // создать карточку
+const checkURL = (val, helper) => {
+  if (!isURL(val, { require_protocol: true })) {
+    return helper.message('Не валидный URL');
+  }
+
+  return val;
+};
 cardRoutes.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required(),
+    link: Joi.string().custom(checkURL, 'invalid URL').required(),
     createdAt: Joi.date(),
   }),
 }), createCard);
