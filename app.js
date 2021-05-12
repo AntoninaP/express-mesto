@@ -11,6 +11,7 @@ const NotFoundError = require('./errors/not-found-error');
 const { PORT = 3000 } = process.env;
 const app = express();
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -21,6 +22,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use(helmet());
 
 app.use(express.json());
+
+app.use(requestLogger); // подключаем логгер запросов
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -54,6 +57,8 @@ app.use('/', routes);
 app.use((req, res, next) => {
   next(new NotFoundError('Ресурс не найден'));
 });
+
+app.use(errorLogger); // подключаем логгер ошибок
 
 // обработчики ошибок
 app.use(errors()); // обработчик ошибок celebrate
